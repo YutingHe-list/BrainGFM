@@ -44,16 +44,13 @@ Then check that this environment can see the GPU:
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-**Step 2**: Download the pretrained checkpoints
-
-`configs/train_lora.yaml` loads the stage-1 codebook and the stage-2 D12 model from `pretrained/`.
+**Step 2**: Download the pretrained checkpoint
 
 | Weight | Download | Description |
 | --- | --- | --- |
-| `braingfm_pretrain.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Stage-1 codebook |
-| `braingfm_d12.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Stage-2 generation model |
+| `braingfm_pretrain.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Pre-trained generative brain-imaging foundation model |
 
-Download both checkpoints into `pretrained/`.
+Download the checkpoint and save it to `pretrained/braingfm_pretrain.pth`.
 
 **Step 3**: Index the slice data
 
