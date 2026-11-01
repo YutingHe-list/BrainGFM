@@ -25,50 +25,67 @@ We propose **BrainGFM**, a generative foundation model with a reusable and recon
 ### Dependencies
 
 - Python 3.10
-- PyTorch 2.7
+- PyTorch 2.7.0
 - CUDA 12.6
 
-Step 1: Clone the repository
+**Step 1**: Install BrainGFM
+
+`train_lora.py` and `infer_lora.py` both run on CUDA. Clone the repository and install the pinned packages, including PyTorch 2.7.0:
 
 ```bash
-git clone https://github.com/<your-account>/BrainGFM
+git clone https://github.com/YutingHe-list/BrainGFM
 cd BrainGFM/
 pip install -r requirements.txt
 ```
 
-Step 2: Download the pretrained weights
+Then check that this environment can see the GPU:
+
+```bash
+python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+```
+
+**Step 2**: Download the pretrained checkpoints
+
+`configs/train_lora.yaml` loads the stage-1 codebook and the stage-2 D12 model from `pretrained/`.
 
 | Weight | Download | Description |
 | --- | --- | --- |
-| `braingfm_pretrain.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Pre-trained generative brain-imaging foundation model |
+| `braingfm_pretrain.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Stage-1 codebook |
+| `braingfm_d12.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Stage-2 generation model |
 
-Download the checkpoint and save it to `pretrained/braingfm_pretrain.pth`.
+Download both checkpoints into `pretrained/`.
 
-Step 3: Prepare your data
+**Step 3**: Index the slice data
 
-Place your slices under `./data/BrainGFM` following [`data/BrainGFM/README.md`](data/BrainGFM/README.md), then build the index (one-time):
+Put axial slices under `./data/BrainGFM`, using the layout in [`data/BrainGFM/README.md`](data/BrainGFM/README.md): one folder each for `T1`, `T1ce`, `T2`, `FLAIR`, `DWI`, `CT`, and `Unknow`, plus `Lable/Brain_mask` and `Lable/Lable_mask`. `rebuild_index_phase2.py` scans that directory and writes the train and validation indexes once:
 
 ```bash
-python rebuild_index_phase2.py --root ./data/BrainGFM
+python rebuild_index_phase2.py
 ```
 
-## 1. LoRA fine-tuning
+The indexes are saved to `data/BrainGFM/.braingfm_index_train.json` and `data/BrainGFM/.braingfm_index_val.json`. Later training reads these files instead of scanning the slices again.
 
-Edit `configs/train_lora.yaml` and set `lora_modality` to the modality you want to adapt (`t1 | t2 | t1ce | flair | dwi | ct | unknow`). Then run:
+**Step 4**: Adapt one modality with LoRA
+
+In `configs/train_lora.yaml`, set `lora_modality` to the modality you want to generate (`t1 | t2 | t1ce | flair | dwi | ct | unknow`). The default is `flair`, using 20 axial slices. The codebook and the D12 weights stay frozen; only the LoRA for that modality is trained.
 
 ```bash
 python train_lora.py --config configs/train_lora.yaml
 ```
 
-The adapted LoRA weights will be saved under `experiments/lora_finetune/`.
+The run is saved to `experiments/lora_finetune/<timestamp-name>/`, and the checkpoint to load later is `best_lora.pth` in that folder.
 
-## 2. Generation
+**Step 5**: Generate slices with the adapted LoRA
+
+`infer_lora.py` loads `best_lora.pth` on top of the stage-2 model. `--mode pair` generates aligned mask–image pairs. `--mode mask_cond` keeps the real few-shot masks and generates the corresponding images.
 
 ```bash
 python infer_lora.py \
     --lora_ckpt experiments/lora_finetune/<run>/best_lora.pth \
-    --mode pair --n_samples 100 --out synth/flair_100
+    --mode pair --n_samples 100 --out_dir synth/flair_100
 ```
+
+Each sample is written into `synth/flair_100/` as `pair_XXXXXX_image.png`, `pair_XXXXXX_mask.png`, and `pair_XXXXXX_mask_idx.npy`.
 
 ## Acknowledgements
 
