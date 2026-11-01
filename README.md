@@ -2,11 +2,11 @@
 
 The official code of BrainGFM — a generative foundation model for computational brain imaging.
 
+📢 **BrainGFM paper** — A generative foundation model with a reusable and reconfigurable brain-imaging prior.
+
 <p align="center">
   <img src="Fig/BrainGFM.png" alt="BrainGFM overview" width="90%"/>
 </p>
-
-📢 **BrainGFM paper** — A generative foundation model with a reusable and reconfigurable brain-imaging prior.
 
 ## News
 
