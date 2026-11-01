@@ -17,7 +17,7 @@ Computational brain imaging is constrained by a mismatch between increasingly di
 We propose **BrainGFM**, a generative foundation model with a reusable and reconfigurable brain-imaging prior, developed on a corpus of about 1.3 million MRI and CT slices (BrainGFM-1.3M; T1 / T2 / T1ce / FLAIR / DWI / CT). This prior supports two complementary forms of downstream transfer: **task-aligned data synthesis** for low-data predictive learning, and **task-adapted post-training** for image reconstruction. Across 48 downstream tasks, BrainGFM improved segmentation and classification under limited supervision and achieved high-fidelity enhancement across heterogeneous imaging conditions. Multicenter validation in 4,796 stroke patients across six centers demonstrated its applicability and generalizability to clinically relevant stroke tasks. Blinded reader assessments showed that BrainGFM-generated FLAIR approached acquired FLAIR in overall diagnostic quality, and in a human–AI collaboration study, assistance yielded a 14% relative improvement in mean radiologist stroke-subtyping accuracy.
 
 <p align="center">
-  <img src="Fig/BrainGFM.png" alt="BrainGFM overview" width="100%"/>
+  <img src="Fig/BrainGFM.png" alt="BrainGFM overview"/>
 </p>
 
 ## 🏃 Playground: Quick start
@@ -38,11 +38,15 @@ pip install -r requirements.txt
 
 Step 2: Download the pretrained weights
 
-Download from [link](https://huggingface.co/wenxuyyds/BrainGFM) and put the files into `pretrained/`.
+| Weight | Download | Description |
+| --- | --- | --- |
+| `braingfm_pretrain.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Pre-trained generative brain-imaging foundation model |
+
+Download the checkpoint and save it to `pretrained/braingfm_pretrain.pth`.
 
 Step 3: Prepare your data
 
-Place your slices under `./data/BrainGFM` following [`docs/DATA_PREP.md`](docs/DATA_PREP.md), then build the index (one-time):
+Place your slices under `./data/BrainGFM` following [`data/BrainGFM/README.md`](data/BrainGFM/README.md), then build the index (one-time):
 
 ```bash
 python rebuild_index_phase2.py --root ./data/BrainGFM
