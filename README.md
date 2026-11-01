@@ -1,15 +1,12 @@
 # BrainGFM
 
-The official code of BrainGFM — A Brain Imaging Generative Foundation Model across 7 modalities (T1 / T2 / T1ce / FLAIR / DWI / CT / Unknown).
+The official code of BrainGFM — a generative foundation model for computational brain imaging.
 
 <p align="center">
   <img src="Fig/BrainGFM.png" alt="BrainGFM overview" width="90%"/>
 </p>
 
-> 📄 If the figure above does not render, you can view the full PDF here:
-> [`Fig/BrainGFM.pdf`](Fig/BrainGFM.pdf)
-
-📢 **BrainGFM paper** — *A Brain Imaging Generative Foundation Model across 7 Modalities* (TODO: add authors and BibTeX once the paper is public).
+📢 **BrainGFM paper** — A generative foundation model with a reusable and reconfigurable brain-imaging prior.
 
 ## News
 
@@ -20,14 +17,6 @@ The official code of BrainGFM — A Brain Imaging Generative Foundation Model ac
 Computational brain imaging is constrained by a mismatch between increasingly diverse tasks and scarce, heterogeneous clinical data. Although existing brain foundation models transfer pretrained representations, their knowledge remains entangled within model-specific features and fixed architectures.
 
 We propose **BrainGFM**, a generative foundation model with a reusable and reconfigurable brain-imaging prior, developed on a corpus of about 1.3 million MRI and CT slices (BrainGFM-1.3M; T1 / T2 / T1ce / FLAIR / DWI / CT). This prior supports two complementary forms of downstream transfer: **task-aligned data synthesis** for low-data predictive learning, and **task-adapted post-training** for image reconstruction. Across 48 downstream tasks, BrainGFM improved segmentation and classification under limited supervision and achieved high-fidelity enhancement across heterogeneous imaging conditions. Multicenter validation in 4,796 stroke patients across six centers demonstrated its applicability and generalizability to clinically relevant stroke tasks. Blinded reader assessments showed that BrainGFM-generated FLAIR approached acquired FLAIR in overall diagnostic quality, and in a human–AI collaboration study, assistance yielded a 14% relative improvement in mean radiologist stroke-subtyping accuracy.
-
-## Pretrained weights
-
-BrainGFM pretrained weights are hosted on Hugging Face:
-
-👉 **[wenxuyyds/BrainGFM](https://huggingface.co/wenxuyyds/BrainGFM)**
-
-Download the weights and place them in the `pretrained/` folder at the repository root.
 
 ## 🏃 Playground: Quick start
 
@@ -47,7 +36,7 @@ pip install -r requirements.txt
 
 Step 2: Download the pretrained weights
 
-Download from [wenxuyyds/BrainGFM](https://huggingface.co/wenxuyyds/BrainGFM) and put the files into `pretrained/`.
+Download from [link](https://huggingface.co/wenxuyyds/BrainGFM) and put the files into `pretrained/`.
 
 Step 3: Prepare your data
 
