@@ -59,26 +59,47 @@ Skull stripping uses the two tools below. Each one predicts a brain mask, and ev
 
 The brain is then cropped to 256 by 256. If the brain region is already larger than 256 on either side, the slice is scaled down until the whole brain fits inside 256 by 256. The brain mask is cropped and scaled with the image.
 
-## 4. Adapt one modality with LoRA
+## 4. Adapt the model
 
-Put a few of these slices under `data/BrainGFM`. Each slice needs a brain mask with the same file name:
+Put the slices under data/BrainGFM. Fine-tuning scales each slice to -1 to 1, and the inverse maps a generated image back to the original intensity. The three tasks are segmentation, classification, and enhancement. Segmentation and classification train a LoRA. Enhancement updates the whole generator.
+
+### Segmentation
+
+Use a few labeled axial slices of one modality. Each slice needs a brain mask and a label mask with the same file name:
 
 ```
 data/BrainGFM/FLAIR/<cohort>/<case>/slice_XXXX.nii.gz
 data/BrainGFM/Lable/Brain_mask/<cohort>/<case>/slice_XXXX.nii.gz
+data/BrainGFM/Lable/Lable_mask/<cohort>/<case>/slice_XXXX.nii.gz
 ```
 
 T1, T1ce, T2, DWI, CT, and Unknow use the same layout, with the modality folder name changed. The default run takes 20 FLAIR slices.
 
-Fine-tuning then scales each slice to -1 to 1, and the inverse maps a generated image back to the original intensity. With the pretrained weights, the two scripts below are enough to fine-tune and run inference.
-
-In `configs/train_lora.yaml`, set `lora_modality` to `t1 | t2 | t1ce | flair | dwi | ct | unknow`. The weights stay frozen; only the LoRA for that modality is trained.
+In configs/train_lora.yaml, set lora_modality to t1, t2, t1ce, flair, dwi, ct, or unknow. The pretrained weights stay frozen, and only the LoRA for that modality is trained.
 
 ```bash
 python train_lora.py --config configs/train_lora.yaml
 ```
 
-The checkpoint for the next step is `experiments/lora_finetune/<timestamp-name>/best_lora.pth`.
+The checkpoint is best_lora.pth under experiments/lora_finetune. The next section uses it to build labeled pairs.
+
+### Classification
+
+List each class and the cases that belong to it. Start from configs/task_cases_template.yaml. Each class uses 20 slices of the chosen modality, laid out the same way as above, with a brain mask of the same file name. The LoRA then learns a condition for each class.
+
+```bash
+python train_lora.py --config configs/train_lora.yaml --task_cases_config configs/task_cases_template.yaml
+```
+
+The checkpoint is written to the same folder. Inference in the next section reads the class names in that checkpoint and generates each class in turn.
+
+### Enhancement
+
+Enhancement fine-tunes the whole generator on a clean slice and a degraded slice of the same cut. How to build a pair is in [Enhancement pairs](#enhancement-pairs).
+
+```bash
+python pretrain/train_d12.py --config configs/train_d12.yaml
+```
 
 ## 5. Inference
 
@@ -115,6 +136,8 @@ noisy_mr = add_rician_noise(clean_mr, delta_t=0.5)
 ```
 
 Keep the clean file as `slice_XXXX.nii.gz` and save the degraded file beside it as `slice_XXXX_ld.nii.gz`.
+
+**Why.** This simulates a clinical acquisition. Hospitals often scan with a lower CT dose to reduce radiation, or with a low-field MR scanner when a high-field scanner is not available. Both are noisier than a routine image of the same cut. A second scan of that cut is rarely collected, so the degraded slice is simulated from the clean one and the two stay aligned.
 
 ## Acknowledgements
 
