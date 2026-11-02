@@ -50,7 +50,12 @@ Download the checkpoint and save it to `pretrained/braingfm_pretrain.pth`.
 
 Each axial slice is skull-stripped, then placed on a 256 by 256 image, before it is saved.
 
-MR skull stripping uses HD-BET. It predicts a brain mask, and everything outside that mask is cleared. CT uses SynthStrip, which predicts a brain mask on the CT slice and clears the skull the same way.
+Skull stripping uses the two tools below. Each one predicts a brain mask, and everything outside that mask is cleared.
+
+| Tool | Reference | Use |
+| --- | --- | --- |
+| HD-BET | [link](https://github.com/MIC-DKFZ/HD-BET) | MR. The mask removes the skull and other tissue outside the brain. |
+| SynthStrip | [link](https://surfer.nmr.mgh.harvard.edu/docs/synthstrip/) | CT. The mask removes the skull on the CT slice. |
 
 The brain is then cropped to 256 by 256. If the brain region is already larger than 256 on either side, the slice is scaled down until the whole brain fits inside 256 by 256. The brain mask is cropped and scaled with the image.
 
