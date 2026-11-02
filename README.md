@@ -111,8 +111,6 @@ noisy_mr = add_rician_noise(clean_mr, delta_t=0.5)
 
 Keep the clean file as `slice_XXXX.nii.gz` and save the degraded file beside it as `slice_XXXX_ld.nii.gz`.
 
-**Why.** Enhancement training needs the two images to line up pixel for pixel, and a second low-dose or low-field scan of the same subject is rarely available. CT dose is lowered before reconstruction: fewer photons reach the detector, and filtered back-projection turns that into the streaky low-dose texture. The CT function follows this path. A low-field MR scan mainly loses signal-to-noise ratio, and a magnitude image then follows Rician noise, which is what the MR function adds inside the brain. Background voxels that are already 0 are left unchanged.
-
 ## Acknowledgements
 
 This repository reuses code from the following projects:
