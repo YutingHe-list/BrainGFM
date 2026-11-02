@@ -57,7 +57,7 @@ data/BrainGFM/Lable/Brain_mask/<cohort>/<case>/slice_XXXX.nii.gz
 
 T1, T1ce, T2, DWI, CT, and Unknow use the same layout, with the modality folder name changed. The default run takes 20 FLAIR slices.
 
-In `configs/train_lora.yaml`, set `lora_modality` to `t1 | t2 | t1ce | flair | dwi | ct | unknow`. The codebook and the D12 weights stay frozen; only the LoRA for that modality is trained.
+In `configs/train_lora.yaml`, set `lora_modality` to `t1 | t2 | t1ce | flair | dwi | ct | unknow`. The weights stay frozen; only the LoRA for that modality is trained.
 
 ```bash
 python train_lora.py --config configs/train_lora.yaml
