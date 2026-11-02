@@ -1,0 +1,50 @@
+lora_modality: flair
+lora_source: null
+lora_case: null
+lora_num_slices: 20
+lora_min_brain_ratio: 0.05
+lora_rot90_aug: true
+
+lora_rank: 8
+lora_alpha: 16.0
+lora_dropout: 0.05
+tune_class_emb: true
+tune_uncond_class_emb: true
+
+data_dir: ./data/BrainGFM
+image_size: 256
+depth: 12
+num_classes: 7
+vocab_size: 4096
+z_channels: 32
+ch: 160
+v_patch_nums: [1, 2, 3, 4, 5, 6, 8, 10, 13, 16]
+mask_type: interleave_append
+cond_drop_rate: 0.1
+braingfm_modalities: [t1, t2, t1ce, flair, dwi, ct, unknow]
+braingfm_index_json: ./data/BrainGFM/.braingfm_index_{split}.json
+braingfm_val_ratio: 0.05
+braingfm_split_seed: 42
+braingfm_use_merged_mask: true
+vae_pretrained_path: pretrained/braingfm_pretrain.pth
+d12_pretrained_path: pretrained/braingfm_d12.pth
+
+batch_size: 4
+num_epochs: 250
+learning_rate: 2.0e-4
+weight_decay: 0.0
+warmup_epochs: 10
+clip: 2.0
+mixed_precision: bf16
+seed: 42
+log_interval: 25
+save_interval: 50
+vis_interval: 25
+num_workers: 2
+
+cfg: [4.0, 4.0, 4.0]
+top_k: 900
+top_p: 0.96
+
+run_name: null
+output_dir: experiments/lora_finetune

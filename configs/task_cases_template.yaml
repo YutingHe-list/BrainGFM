@@ -1,0 +1,8 @@
+modality: flair
+slices_per_class: 20
+class_names: [classA, classB]
+classes:
+  classA:
+    - {source: <SOURCE_A>, case: <CASE_A>}
+  classB:
+    - {source: <SOURCE_B>, case: <CASE_B>}

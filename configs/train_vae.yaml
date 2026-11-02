@@ -1,0 +1,39 @@
+data_dir: ./data/BrainGFM
+dataset_name: braingfm
+image_size: 256
+braingfm_index_json: ./data/BrainGFM/.braingfm_index_{split}.json
+braingfm_modalities: [t1, t2, t1ce, flair, dwi, ct, unknow]
+braingfm_min_brain_ratio: 0.0
+braingfm_val_slice_cap: 0
+braingfm_max_per_modality: 0
+braingfm_mask_mix_prob: 0.0
+braingfm_rot90_aug: false
+image_only: true
+
+gpus: 4
+batch_size: 2
+num_workers: 8
+num_epochs: 20
+learning_rate: 4.5e-6
+weight_decay: 0.0
+lr_scheduler: linear
+lr_warmup_steps: 0.0
+log_interval: 50
+save_interval: 2000
+val_interval: 1
+early_stop_patience: 3
+mixed_precision: no
+gradient_accumulation_steps: 1
+seed: 42
+
+vae_variant: single
+vocab_size: 4096
+z_channels: 32
+ch: 160
+v_patch_nums: [1, 2, 3, 4, 5, 6, 8, 10, 13, 16]
+disc_start: 999999
+disc_weight: 0.8
+codebook_weight: 1.0
+
+output_dir: experiments/vae_braingfm
+run_name: vae_single
