@@ -80,13 +80,9 @@ Each sample is written into `synth/flair_100/` as `pair_XXXXXX_image.png`, `pair
 
 ## Enhancement pairs
 
-The enhancement task learns to recover a clean slice from a degraded one, so each pair has to be pixel-aligned. Routine CT and MR are easy to collect; a second low-dose or low-field scan of the same subject usually is not. The degraded image is therefore simulated from the clean slice, with the two operators in `data_preprocess/`.
+One pair is a clean slice and a degraded slice of the same cut. The degraded slice is simulated from the clean one.
 
-Low-dose CT noise is added where the photon count drops, in the projection domain. [`simulate_low_dose_ct.py`](data_preprocess/simulate_low_dose_ct.py) converts HU to attenuation, forward-projects a fan-beam sinogram, adds a Poisson approximation, and reconstructs with FBP. `dose_percent` is the retained dose. Draw one value per slice from the low-dose range you want to match; 5–40 is a strong setting. This step needs an NVIDIA GPU and `astra-toolbox`.
-
-Low-field MR is approximated by the SNR loss of a magnitude image. [`simulate_low_field_mr.py`](data_preprocess/simulate_low_field_mr.py) scales the nonzero foreground to `[0, 1]` and adds Rician noise, `sigma = sqrt(delta_t * 0.005)`, then scales it back. `delta_t` is in `[0, 1]`; `0.5` is a moderate setting and `0.8` is stronger. Background voxels that are exactly 0 stay 0.
-
-From the repository root, with a clean 2D slice in memory:
+**How to build a pair.** For CT, pass a 2D HU slice to [`low_dose_create`](data_preprocess/simulate_low_dose_ct.py). `dose_percent=20` keeps 20% of a routine dose; use 5–40 for a clearly low-dose image. This step needs an NVIDIA GPU and astra-toolbox. For MR, pass a 2D magnitude slice to [`add_rician_noise`](data_preprocess/simulate_low_field_mr.py). `delta_t` runs from 0 to 1; 0.5 is a moderate setting and 0.8 is stronger.
 
 ```python
 from data_preprocess.simulate_low_dose_ct import low_dose_create
@@ -96,7 +92,9 @@ low_dose_ct = low_dose_create(clean_hu, dose_percent=20)
 noisy_mr = add_rician_noise(clean_mr, delta_t=0.5)
 ```
 
-Save the result next to the clean slice as `slice_XXXX_ld.nii.gz` if an enhancement run should read the degraded image from disk.
+Keep the clean file as `slice_XXXX.nii.gz` and save the degraded file beside it as `slice_XXXX_ld.nii.gz`.
+
+**Why.** Enhancement training needs the two images to line up pixel for pixel, and a second low-dose or low-field scan of the same subject is rarely available. CT dose is lowered before reconstruction: fewer photons reach the detector, and filtered back-projection turns that into the streaky low-dose texture. The CT function follows this path. A low-field MR scan mainly loses signal-to-noise ratio, and a magnitude image then follows Rician noise, which is what the MR function adds inside the brain. Background voxels that are already 0 are left unchanged.
 
 ## Acknowledgements
 
