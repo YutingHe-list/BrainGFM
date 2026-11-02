@@ -67,7 +67,7 @@ The checkpoint for the next step is `experiments/lora_finetune/<timestamp-name>/
 
 ## 4. Inference
 
-`infer_lora.py` loads `best_lora.pth` on top of the pretrained model and writes synthetic slices. `--mode pair` generates an aligned mask and image together. `--mode mask_cond` keeps the real few-shot masks and generates the matching images.
+Fine-tune on a small set of labeled slices. The adapted model can then generate masks with no image input. Each of those masks is passed through the same fine-tuned weights to generate the corresponding image. Remove the brain-region label from the mask, and the remaining labels together with that image are a labeled pair.
 
 ```bash
 python infer_lora.py \
@@ -75,7 +75,7 @@ python infer_lora.py \
     --mode pair --n_samples 100 --out_dir synth/flair_100
 ```
 
-Each sample is saved in `synth/flair_100/` as `pair_XXXXXX_image.png`, `pair_XXXXXX_mask.png`, and `pair_XXXXXX_mask_idx.npy`.
+Each sample is written into the output folder as the generated mask, the generated image, and the mask index.
 
 ## Enhancement pairs
 
