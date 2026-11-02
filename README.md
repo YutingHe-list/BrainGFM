@@ -59,7 +59,7 @@ Skull stripping uses the two tools below. Each one predicts a brain mask, and ev
 
 The brain is then cropped to 256 by 256. If the brain region is already larger than 256 on either side, the slice is scaled down until the whole brain fits inside 256 by 256. The brain mask is cropped and scaled with the image.
 
-## 4. Adapt the model
+## 4. Adapt the model with LoRA
 
 Put the slices under data/BrainGFM. Fine-tuning scales each slice to -1 to 1, and the inverse maps a generated image back to the original intensity. The three tasks are segmentation, classification, and enhancement. Segmentation and classification train a LoRA. Enhancement updates the whole generator.
 
@@ -95,7 +95,7 @@ The checkpoint is written to the same folder. Inference in the next section read
 
 ### Enhancement
 
-Enhancement fine-tunes the whole generator on a clean slice and a degraded slice of the same cut. How to build a pair is in [Enhancement pairs](#enhancement-pairs).
+Enhancement fine-tunes the whole generator on a clean slice and a degraded slice of the same cut. How to build a pair is in [Building enhancement image pairs](#building-enhancement-image-pairs).
 
 ```bash
 python pretrain/train_d12.py --config configs/train_d12.yaml
@@ -113,7 +113,7 @@ python infer_lora.py \
 
 Each sample is written into the output folder as the generated mask, the generated image, and the mask index.
 
-## Enhancement pairs
+## Building enhancement image pairs
 
 One pair is a clean slice and a degraded slice of the same cut. The degraded slice is simulated from the clean one.
 
@@ -137,7 +137,7 @@ noisy_mr = add_rician_noise(clean_mr, delta_t=0.5)
 
 Keep the clean file as `slice_XXXX.nii.gz` and save the degraded file beside it as `slice_XXXX_ld.nii.gz`.
 
-**Why.** This simulates a clinical acquisition. Hospitals often scan with a lower CT dose to reduce radiation, or with a low-field MR scanner when a high-field scanner is not available. Both are noisier than a routine image of the same cut. A second scan of that cut is rarely collected, so the degraded slice is simulated from the clean one and the two stay aligned.
+This simulates a low-dose CT scan and a low-field MR scan in clinical practice.
 
 ## Acknowledgements
 
