@@ -46,29 +46,28 @@ python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 
 Download the checkpoint and save it to `pretrained/braingfm_pretrain.pth`.
 
-## 3. Index the slice data
+## 3. Adapt one modality with LoRA
 
-Put axial slices under `./data/BrainGFM`, using the layout in [`data/BrainGFM/README.md`](data/BrainGFM/README.md): one folder each for `T1`, `T1ce`, `T2`, `FLAIR`, `DWI`, `CT`, and `Unknow`, plus `Lable/Brain_mask` and `Lable/Lable_mask`. `rebuild_index_phase2.py` scans that directory and writes the train and validation indexes once:
+Put a few axial slices of the modality you want to adapt under `data/BrainGFM`. Each slice needs a brain mask with the same file name:
 
-```bash
-python rebuild_index_phase2.py
+```
+data/BrainGFM/FLAIR/<cohort>/<case>/slice_XXXX.nii.gz
+data/BrainGFM/Lable/Brain_mask/<cohort>/<case>/slice_XXXX.nii.gz
 ```
 
-The indexes are saved to `data/BrainGFM/.braingfm_index_train.json` and `data/BrainGFM/.braingfm_index_val.json`. Later training reads these files instead of scanning the slices again.
+T1, T1ce, T2, DWI, CT, and Unknow use the same layout, with the modality folder name changed. The default run takes 20 FLAIR slices.
 
-## 4. Adapt one modality with LoRA
-
-In `configs/train_lora.yaml`, set `lora_modality` to the modality you want to generate (`t1 | t2 | t1ce | flair | dwi | ct | unknow`). The default is `flair`, using 20 axial slices. The codebook and the D12 weights stay frozen; only the LoRA for that modality is trained.
+In `configs/train_lora.yaml`, set `lora_modality` to `t1 | t2 | t1ce | flair | dwi | ct | unknow`. The codebook and the D12 weights stay frozen; only the LoRA for that modality is trained.
 
 ```bash
 python train_lora.py --config configs/train_lora.yaml
 ```
 
-The run is saved to `experiments/lora_finetune/<timestamp-name>/`, and the checkpoint to load later is `best_lora.pth` in that folder.
+The checkpoint for the next step is `experiments/lora_finetune/<timestamp-name>/best_lora.pth`.
 
-## 5. Generate slices with the adapted LoRA
+## 4. Inference
 
-`infer_lora.py` loads `best_lora.pth` on top of the stage-2 model. `--mode pair` generates aligned mask–image pairs. `--mode mask_cond` keeps the real few-shot masks and generates the corresponding images.
+`infer_lora.py` loads `best_lora.pth` on top of the pretrained model and writes synthetic slices. `--mode pair` generates an aligned mask and image together. `--mode mask_cond` keeps the real few-shot masks and generates the matching images.
 
 ```bash
 python infer_lora.py \
@@ -76,13 +75,21 @@ python infer_lora.py \
     --mode pair --n_samples 100 --out_dir synth/flair_100
 ```
 
-Each sample is written into `synth/flair_100/` as `pair_XXXXXX_image.png`, `pair_XXXXXX_mask.png`, and `pair_XXXXXX_mask_idx.npy`.
+Each sample is saved in `synth/flair_100/` as `pair_XXXXXX_image.png`, `pair_XXXXXX_mask.png`, and `pair_XXXXXX_mask_idx.npy`.
 
 ## Enhancement pairs
 
 One pair is a clean slice and a degraded slice of the same cut. The degraded slice is simulated from the clean one.
 
-**How to build a pair.** For CT, pass a 2D HU slice to [`low_dose_create`](data_preprocess/simulate_low_dose_ct.py). `dose_percent=20` keeps 20% of a routine dose; use 5–40 for a clearly low-dose image. This step needs an NVIDIA GPU and astra-toolbox. For MR, pass a 2D magnitude slice to [`add_rician_noise`](data_preprocess/simulate_low_field_mr.py). `delta_t` runs from 0 to 1; 0.5 is a moderate setting and 0.8 is stronger.
+**How to build a pair.** For CT, pass a 2D HU slice to [`low_dose_create`](data_preprocess/simulate_low_dose_ct.py). `dose_percent=20` keeps 20% of a routine dose; use 5–40 for a clearly low-dose image. For MR, pass a 2D magnitude slice to [`add_rician_noise`](data_preprocess/simulate_low_field_mr.py). `delta_t` runs from 0 to 1; 0.5 is a moderate setting and 0.8 is stronger.
+
+The CT function needs an NVIDIA GPU and the ASTRA toolbox, which is not in `requirements.txt`. MR noise does not need it.
+
+```bash
+conda install -c astra-toolbox astra-toolbox
+```
+
+Install notes are in the [ASTRA toolbox documentation](https://astra-toolbox.com/docs/install.html).
 
 ```python
 from data_preprocess.simulate_low_dose_ct import low_dose_create
