@@ -82,6 +82,26 @@ python infer_lora.py \
 
 Each sample is written into `synth/flair_100/` as `pair_XXXXXX_image.png`, `pair_XXXXXX_mask.png`, and `pair_XXXXXX_mask_idx.npy`.
 
+## Enhancement pairs
+
+The enhancement task learns to recover a clean slice from a degraded one, so each pair has to be pixel-aligned. Routine CT and MR are easy to collect; a second low-dose or low-field scan of the same subject usually is not. The degraded image is therefore simulated from the clean slice, with the two operators in `data_preprocess/`.
+
+Low-dose CT noise is added where the photon count drops, in the projection domain. [`simulate_low_dose_ct.py`](data_preprocess/simulate_low_dose_ct.py) converts HU to attenuation, forward-projects a fan-beam sinogram, adds a Poisson approximation, and reconstructs with FBP. `dose_percent` is the retained dose. Draw one value per slice from the low-dose range you want to match; 5–40 is a strong setting. This step needs an NVIDIA GPU and `astra-toolbox`.
+
+Low-field MR is approximated by the SNR loss of a magnitude image. [`simulate_low_field_mr.py`](data_preprocess/simulate_low_field_mr.py) scales the nonzero foreground to `[0, 1]` and adds Rician noise, `sigma = sqrt(delta_t * 0.005)`, then scales it back. `delta_t` is in `[0, 1]`; `0.5` is a moderate setting and `0.8` is stronger. Background voxels that are exactly 0 stay 0.
+
+From the repository root, with a clean 2D slice in memory:
+
+```python
+from data_preprocess.simulate_low_dose_ct import low_dose_create
+from data_preprocess.simulate_low_field_mr import add_rician_noise
+
+low_dose_ct = low_dose_create(clean_hu, dose_percent=20)
+noisy_mr = add_rician_noise(clean_mr, delta_t=0.5)
+```
+
+Save the result next to the clean slice as `slice_XXXX_ld.nii.gz` if an enhancement run should read the degraded image from disk.
+
 ## Acknowledgements
 
 This repository reuses code from the following projects:
