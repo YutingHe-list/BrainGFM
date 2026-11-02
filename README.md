@@ -38,13 +38,18 @@ Then check that this environment can see the GPU:
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-## 2. Download the pretrained checkpoint
+## 2. Download the pretrained checkpoints
 
-| Weight | Download | Description |
-| --- | --- | --- |
-| `braingfm_pretrain.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Pre-trained generative brain-imaging foundation model |
+Download the weights from [Hugging Face](https://huggingface.co/wenxuyyds/BrainGFM) and put them in a `pretrained` folder at the repository root:
 
-Download the checkpoint and save it to `pretrained/braingfm_pretrain.pth`.
+```
+pretrained/braingfm_pretrain.pth
+pretrained/braingfm_d12.pth
+```
+
+`braingfm_pretrain.pth` is the codebook. `braingfm_d12.pth` is the generative model. Fine-tuning and inference both read these two files. This folder is not committed.
+
+The LoRA trained in the next step is written separately to `experiments/lora_finetune/<run>/best_lora.pth`.
 
 ## 3. Adapt one modality with LoRA
 
@@ -56,6 +61,10 @@ data/BrainGFM/Lable/Brain_mask/<cohort>/<case>/slice_XXXX.nii.gz
 ```
 
 T1, T1ce, T2, DWI, CT, and Unknow use the same layout, with the modality folder name changed. The default run takes 20 FLAIR slices.
+
+Remove the skull before saving these slices. MR uses [HD-BET](https://github.com/MIC-DKFZ/HD-BET) (Isensee et al., 2019). CT uses [SynthStrip](https://surfer.nmr.mgh.harvard.edu/docs/synthstrip/) (Hoopes et al., 2022).
+
+Fine-tuning then scales each slice to -1 to 1, and the inverse maps a generated image back to the original intensity. With the pretrained weights, the two scripts below are enough to fine-tune and run inference.
 
 In `configs/train_lora.yaml`, set `lora_modality` to `t1 | t2 | t1ce | flair | dwi | ct | unknow`. The weights stay frozen; only the LoRA for that modality is trained.
 
@@ -124,5 +133,26 @@ If you use this code, please cite the BrainGFM paper (TODO: add BibTeX once the 
   author = {TODO},
   journal= {TODO},
   year   = {2026}
+}
+
+@article{isensee2019hdbet,
+  title   = {Automated brain extraction of multisequence MRI using artificial neural networks},
+  author  = {Isensee, Fabian and Schell, Marianne and Pflueger, Irada and Brugnara, Gianluca and Bonekamp, David and Neuberger, Ulf and Wick, Antje and Schlemmer, Heinz-Peter and Heiland, Sabine and Wick, Wolfgang and Bendszus, Martin and Maier-Hein, Klaus H. and Kickingereder, Philipp},
+  journal = {Human Brain Mapping},
+  volume  = {40},
+  number  = {17},
+  pages   = {4952--4964},
+  year    = {2019},
+  doi     = {10.1002/hbm.24750}
+}
+
+@article{hoopes2022synthstrip,
+  title   = {SynthStrip: skull-stripping for any brain image},
+  author  = {Hoopes, Andrew and Mora, Jocelyn S. and Dalca, Adrian V. and Fischl, Bruce and Hoffmann, Malte},
+  journal = {NeuroImage},
+  volume  = {260},
+  pages   = {119474},
+  year    = {2022},
+  doi     = {10.1016/j.neuroimage.2022.119474}
 }
 ```
