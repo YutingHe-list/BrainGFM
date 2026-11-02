@@ -11,7 +11,7 @@
 Computational brain imaging is expanding toward increasingly diverse tasks such as segmentation, disease characterization, and image enhancement. However, representative MRI and CT data remain scarce and heterogeneous across clinical centers, scan protocols, and brain diseases, limiting the clinical acceptability of downstream models. We propose a Brain imaging Generative Foundation Model (**BrainGFM**) with a reusable and reconfigurable brain-imaging prior. It has been pre-trained on BrainGFM-1.3M, a large-scale corpus of about 1.3 million MRI and CT slices, and is able to support task-aligned data synthesis for low-data predictive learning and task-adapted post-training for image reconstruction. Via the adaptation with few data, it can further achieve professional performance in real-world specific scenarios.
 
 <p align="center">
-  <img src="Fig/BrainGFM.png" alt="BrainGFM overview"/>
+  <img src="fig/BrainGFM.png" alt="BrainGFM overview"/>
 </p>
 
 ## 🏃 Playground: Quick start BrainGFM
