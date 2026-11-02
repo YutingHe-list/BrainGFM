@@ -38,22 +38,25 @@ Then check that this environment can see the GPU:
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-## 2. Download the pretrained checkpoints
+## 2. Download the pretrained checkpoint
 
-Download the weights from [Hugging Face](https://huggingface.co/wenxuyyds/BrainGFM) and put them in a `pretrained` folder at the repository root:
+| Weight | Download | Description |
+| --- | --- | --- |
+| `braingfm_pretrain.pth` | [link](https://huggingface.co/wenxuyyds/BrainGFM) | Pre-trained generative brain-imaging foundation model |
 
-```
-pretrained/braingfm_pretrain.pth
-pretrained/braingfm_d12.pth
-```
+Download the checkpoint and save it to `pretrained/braingfm_pretrain.pth`.
 
-`braingfm_pretrain.pth` is the codebook. `braingfm_d12.pth` is the generative model. Fine-tuning and inference both read these two files. This folder is not committed.
+## 3. Data preprocessing
 
-The LoRA trained in the next step is written separately to `experiments/lora_finetune/<run>/best_lora.pth`.
+Each axial slice is skull-stripped, then placed on a 256 by 256 image, before it is saved.
 
-## 3. Adapt one modality with LoRA
+MR skull stripping uses HD-BET. It predicts a brain mask, and everything outside that mask is cleared. CT uses SynthStrip, which predicts a brain mask on the CT slice and clears the skull the same way.
 
-Put a few axial slices of the modality you want to adapt under `data/BrainGFM`. Each slice needs a brain mask with the same file name:
+The brain is then cropped to 256 by 256. If the brain region is already larger than 256 on either side, the slice is scaled down until the whole brain fits inside 256 by 256. The brain mask is cropped and scaled with the image.
+
+## 4. Adapt one modality with LoRA
+
+Put a few of these slices under `data/BrainGFM`. Each slice needs a brain mask with the same file name:
 
 ```
 data/BrainGFM/FLAIR/<cohort>/<case>/slice_XXXX.nii.gz
@@ -61,8 +64,6 @@ data/BrainGFM/Lable/Brain_mask/<cohort>/<case>/slice_XXXX.nii.gz
 ```
 
 T1, T1ce, T2, DWI, CT, and Unknow use the same layout, with the modality folder name changed. The default run takes 20 FLAIR slices.
-
-Remove the skull before saving these slices. MR uses [HD-BET](https://github.com/MIC-DKFZ/HD-BET) (Isensee et al., 2019). CT uses [SynthStrip](https://surfer.nmr.mgh.harvard.edu/docs/synthstrip/) (Hoopes et al., 2022).
 
 Fine-tuning then scales each slice to -1 to 1, and the inverse maps a generated image back to the original intensity. With the pretrained weights, the two scripts below are enough to fine-tune and run inference.
 
@@ -74,7 +75,7 @@ python train_lora.py --config configs/train_lora.yaml
 
 The checkpoint for the next step is `experiments/lora_finetune/<timestamp-name>/best_lora.pth`.
 
-## 4. Inference
+## 5. Inference
 
 Fine-tune on a small set of labeled slices. The adapted model can then generate masks with no image input. Each of those masks is passed through the same fine-tuned weights to generate the corresponding image. Remove the brain-region label from the mask, and the remaining labels together with that image are a labeled pair.
 
@@ -133,26 +134,5 @@ If you use this code, please cite the BrainGFM paper (TODO: add BibTeX once the 
   author = {TODO},
   journal= {TODO},
   year   = {2026}
-}
-
-@article{isensee2019hdbet,
-  title   = {Automated brain extraction of multisequence MRI using artificial neural networks},
-  author  = {Isensee, Fabian and Schell, Marianne and Pflueger, Irada and Brugnara, Gianluca and Bonekamp, David and Neuberger, Ulf and Wick, Antje and Schlemmer, Heinz-Peter and Heiland, Sabine and Wick, Wolfgang and Bendszus, Martin and Maier-Hein, Klaus H. and Kickingereder, Philipp},
-  journal = {Human Brain Mapping},
-  volume  = {40},
-  number  = {17},
-  pages   = {4952--4964},
-  year    = {2019},
-  doi     = {10.1002/hbm.24750}
-}
-
-@article{hoopes2022synthstrip,
-  title   = {SynthStrip: skull-stripping for any brain image},
-  author  = {Hoopes, Andrew and Mora, Jocelyn S. and Dalca, Adrian V. and Fischl, Bruce and Hoffmann, Malte},
-  journal = {NeuroImage},
-  volume  = {260},
-  pages   = {119474},
-  year    = {2022},
-  doi     = {10.1016/j.neuroimage.2022.119474}
 }
 ```
