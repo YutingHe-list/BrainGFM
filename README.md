@@ -24,7 +24,7 @@ Computational brain imaging is expanding toward increasingly diverse tasks such 
 
 ### Dependencies
 
-- Python 3.10
+- Python 3.9.21
 - PyTorch 2.7.0
 - CUDA 12.6
 
