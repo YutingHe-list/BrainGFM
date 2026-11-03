@@ -1,9 +1,12 @@
 <p align="center">
-  <img src="fig/BrainGFM_banner.png" width="100%" alt="BrainGFM - A Brain Imaging Foundation Model. A generative foundation model with a reusable and reconfigurable brain-imaging prior."/>
+  <img src="fig/BrainGFM_banner.png" width="100%" alt="BrainGFM - A Generative Foundation Model. A generative foundation model for computational brain imaging."/>
 </p>
+
+**Paper:** [A generative foundation model for computational brain imaging](https://arxiv.org/abs/2611.00265) (arXiv:2611.00265)
 
 ## News
 
+- **2026-11** — Paper released on arXiv: [2611.00265](https://arxiv.org/abs/2611.00265).
 - **2026-11** — Release pretrained weights, LoRA adaptation, and inference code.
 
 ## Brief introduction
@@ -152,13 +155,16 @@ See [`LICENSE`](LICENSE) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Citation
 
-If you use this code, please cite the BrainGFM paper (TODO: add BibTeX once the paper is public).
+If you use this code, please cite:
 
 ```bibtex
-@article{braingfm2026,
-  title  = {{A generative foundation model for computational brain imaging},
-  author = {TODO},
-  journal= {TODO},
-  year   = {2026}
+@misc{he2026generativefoundationmodelcomputational,
+  title         = {A generative foundation model for computational brain imaging},
+  author        = {Yuting He and Xu Wen and Hongxing Lan and Chengliang Liu and Yuxing Liu and Yan Xi and Wenxue Yu and Jindi Kong and Zhiqiang Zhang and Liang Jiang and Rongjun Ge and Yang Chen and Multi-Center Cooperative Clinical Study Group for "Lesion-Phenotype Brain Mapping in Acute Stroke"},
+  year          = {2026},
+  eprint        = {2611.00265},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2611.00265}
 }
 ```
