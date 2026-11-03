@@ -156,7 +156,7 @@ If you use this code, please cite the BrainGFM paper (TODO: add BibTeX once the 
 
 ```bibtex
 @article{braingfm2026,
-  title  = {A Brain Imaging Generative Foundation Model across 7 Modalities},
+  title  = {{A generative foundation model for computational brain imaging},
   author = {TODO},
   journal= {TODO},
   year   = {2026}
