@@ -116,6 +116,37 @@ python lora/infer_lora.py \
 
 Each sample is written into the output folder as the generated mask, the generated image, and the mask index.
 
+## 6. Generate an image from a mask
+
+The pretrained checkpoints are downloaded into `pretrained/` on the first run. A sample mask is already in the repository, so the commands below write a result without any extra data.
+
+| File | Role |
+| --- | --- |
+| `braingfm_pretrain.pth` | Visual tokenizer |
+| `braingfm_d12.pth` | Generator |
+
+Step 1: The testing mask is in `samples/mask_testing/input`. `brain.nii.gz` is a brain region. `lesion.nii.gz` adds one lesion label. A label map uses `0` for background, `1` for brain, and higher values for other labels. You can also put your own 2D `nii.gz` or single-channel PNG in this folder.
+
+Step 2: Generate one image from the sample mask. The image is saved at `--output_path`. A PNG of the image and the mask are saved beside it.
+
+```bash
+python lora/infer_online.py --input_path samples/mask_testing/input/brain.nii.gz --output_path samples/mask_testing/output/brain.nii.gz --modality flair
+```
+
+Generate every mask in the input folder. Each result keeps the input file name.
+
+```bash
+python lora/infer_online.py --input_folder samples/mask_testing/input --output_folder samples/mask_testing/output --modality flair
+```
+
+Leave out the mask and the model samples one itself:
+
+```bash
+python lora/infer_online.py --output_path samples/mask_testing/output/sampled.nii.gz --modality flair
+```
+
+`--modality` is one of `t1`, `t2`, `t1ce`, `flair`, `dwi`, `ct`, `unknow`.
+
 ## Building enhancement image pairs
 
 One pair is a clean slice and a degraded slice of the same cut. The degraded slice is simulated from the clean one.
