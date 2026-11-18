@@ -26,7 +26,7 @@ python app.py
 
 Open `http://127.0.0.1:7860`. Needs a CUDA GPU. First run downloads weights from `wenxuyyds/BrainGFM`.
 
-## Hugging Face Space (no Google account)
+## Hugging Face Space
 
 1. Create a Space: [https://huggingface.co/new-space](https://huggingface.co/spaces/wenxuyyds/BrainGFM)  
    - SDK: **Gradio**  
