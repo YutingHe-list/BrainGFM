@@ -28,7 +28,7 @@ Open `http://127.0.0.1:7860`. Needs a CUDA GPU. First run downloads weights from
 
 ## Hugging Face Space (no Google account)
 
-1. Create a Space: https://huggingface.co/new-space  
+1. Create a Space: [https://huggingface.co/new-space](https://huggingface.co/spaces/wenxuyyds/BrainGFM)  
    - SDK: **Gradio**  
    - Hardware: **GPU** (CPU is not enough)
 2. Point the Space to this GitHub repo, or upload at least:
