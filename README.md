@@ -19,7 +19,7 @@ Computational brain imaging is expanding toward increasingly diverse tasks such 
 
 ## 🏃 Playground: Quick start BrainGFM
 
-- [x] You can try BrainGFM via the [Jupyter Notebook](https://colab.research.google.com/github/YutingHe-list/BrainGFM/blob/main/examples/BrainGFM_demo.ipynb).
+- [ ] You can try BrainGFM via the [Jupyter Notebook](https://colab.research.google.com/github/YutingHe-list/BrainGFM/blob/main/examples/BrainGFM_demo.ipynb).
 - [x] You can implement BrainGFM on your server via the following operations.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YutingHe-list/BrainGFM/blob/main/examples/BrainGFM_demo.ipynb)
