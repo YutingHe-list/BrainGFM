@@ -15,7 +15,7 @@ From the repo root, these are the demo-related additions:
 
 The demo reuses existing code: `lora/infer_online.py`, `lora/train_lora.py`, `models/`, `datasets/`.
 
-## Local run
+## Run
 
 ```bash
 cd BrainGFM
