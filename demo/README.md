@@ -11,7 +11,6 @@ From the repo root, these are the demo-related additions:
 | `app.py` | Gradio web UI |
 | `requirements-demo.txt` | Demo dependencies (Space can copy this to `requirements.txt`) |
 | `examples/BrainGFM_demo.ipynb` | Local Jupyter demo |
-| `samples/mask_testing/input/brain.nii.gz` | Built-in sample mask (already in repo) |
 
 The demo reuses existing code: `lora/infer_online.py`, `lora/train_lora.py`, `models/`, `datasets/`.
 
