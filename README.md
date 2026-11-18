@@ -19,12 +19,22 @@ Computational brain imaging is expanding toward increasingly diverse tasks such 
 
 ## 🏃 Playground: Quick start BrainGFM
 
-- [ ] You can try BrainGFM via the [Jupyter Notebook](https://colab.research.google.com/github/YutingHe-list/BrainGFM/blob/main/examples/BrainGFM_demo.ipynb).
+Mask → image generation (one mask, multiple samples):
+
+<p align="center">
+  <img src="fig/gen_mask__image.png" width="100%" alt="BrainGFM mask-to-image generation examples"/>
+</p>
+
+- [x] You can try BrainGFM via the [Jupyter Notebook](examples/BrainGFM_demo.ipynb).
+- [ ] You can try BrainGFM via the [Online Demo]() (Gradio; see [`demo/README.md`](demo/README.md) to deploy).
 - [x] You can implement BrainGFM on your server via the following operations.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YutingHe-list/BrainGFM/blob/main/examples/BrainGFM_demo.ipynb)
+Local web demo (GPU required):
 
-The notebook is a minimal **mask → T1 image** test: brain mask only (no lesion), via `lora/infer_online.py`.
+```bash
+pip install -r requirements-demo.txt
+python app.py
+```
 
 ## 1. Clone the repository and prepare environment
 
