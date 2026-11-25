@@ -137,11 +137,6 @@ Each sample is written into the output folder as the generated mask, the generat
 
 The pretrained checkpoints are downloaded into `pretrained/` on the first run. A sample mask is already in the repository, so the commands below write a result without any extra data.
 
-| File | Role |
-| --- | --- |
-| `braingfm_pretrain.pth` | Visual tokenizer |
-| `braingfm_d12.pth` | Generator |
-
 Step 1: The testing mask is in `samples/mask_testing/input`. `brain.nii.gz` is a brain region. `lesion.nii.gz` adds one lesion label. A label map uses `0` for background, `1` for brain, and higher values for other labels. You can also put your own 2D `nii.gz` or single-channel PNG in this folder.
 
 Step 2: Generate one image from the sample mask. The image is saved at `--output_path`. A PNG of the image and the mask are saved beside it.
